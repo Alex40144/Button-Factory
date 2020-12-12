@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour
     private float targetZoom;
     public bool gamePaused = false;
     private GameObject[] pauseObjects;
+    private GameObject[] BuildingToggles;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +24,7 @@ public class GameController : MonoBehaviour
         targetZoom = cam.orthographicSize;
         //hide pause screen
         pauseObjects = GameObject.FindGameObjectsWithTag("Show On Pause");
+        BuildingToggles = GameObject.FindGameObjectsWithTag("Disable On Pause");
         Pause();
     }
 
@@ -81,11 +84,18 @@ public class GameController : MonoBehaviour
             foreach(GameObject g in pauseObjects){
                 g.SetActive(true);
             }
+            foreach(GameObject h in BuildingToggles){
+                h.GetComponent<Toggle>().isOn = false;
+                h.GetComponent<Toggle>().interactable = false;
+            }
         }
         else{
             Time.timeScale = 1;
             foreach(GameObject g in pauseObjects){
                 g.SetActive(false);
+            }
+            foreach(GameObject h in BuildingToggles){
+                h.GetComponent<Toggle>().interactable = true;
             }
         }
     }

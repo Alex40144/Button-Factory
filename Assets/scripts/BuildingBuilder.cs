@@ -42,52 +42,70 @@ public class BuildingBuilder : MonoBehaviour
             Vector3Int cellpos = buildingGrid.WorldToCell(pos);
             ghostLayer.ClearAllTiles();
             ghostLayer.SetTile(cellpos, bothOfficeTile);
-            if(Input.GetMouseButton(0)){
-                Build(Camera.main.ScreenToWorldPoint(Input.mousePosition), toggle);
+            if (validPlace(cellpos)){
+                ghostLayer.color = Color.green;
+                if(Input.GetMouseButton(0)){
+                    Build(Camera.main.ScreenToWorldPoint(Input.mousePosition), toggle);
+                }
             }
+            else {
+                ghostLayer.color = Color.red;
+            }
+        }
+        else {
+            ghostLayer.ClearAllTiles();
         }
     }
 
 
 
     void Build(Vector3 Pos, Toggle toggle){
-        Vector3Int Position = buildingGrid.WorldToCell(Pos);
-        Tile tile = getType(Position);
-        buildingLayer.SetTile(Position, tile);
-        RefreshTile(Position + Vector3Int.left);
-        RefreshTile(Position + Vector3Int.right);
-        //TODO fix refresh
+        Vector3Int CellPos = buildingGrid.WorldToCell(Pos);
+        Tile tile = getType(CellPos);
+        buildingLayer.SetTile(CellPos, tile);
+        RefreshTile(CellPos + new Vector3Int( 1, 0, 0));
+        RefreshTile(CellPos + new Vector3Int(-1, 0, 0));
         if(!Input.GetKey(KeyCode.LeftShift)){
             toggle.isOn = false;
-            ghostLayer.ClearAllTiles();
+        }
+        ghostLayer.ClearAllTiles();
+    }
+    //TODO fix refresh
+    void RefreshTile(Vector3Int CellPos){
+        if (buildingLayer.HasTile(CellPos)){
+            Tile tile = getType(CellPos);
+            buildingLayer.SetTile(CellPos, tile);
         }
     }
 
-    void RefreshTile(Vector3Int position){
-        if (buildingLayer.GetTile(position)){
-            Tile tile = getType(position);
-            buildingLayer.SetTile(position, tile);
-        }
-    }
-
-    Tile getType(Vector3 Position){
+    Tile getType(Vector3Int CellPos){
         //get if this is a both / left / right / middle tile
-        Vector3Int position = buildingGrid.WorldToCell(Position);
-        Vector3Int left = position + Vector3Int.left;
-        Vector3Int right = position + Vector3Int.right;
-        if (buildingLayer.GetTile(left) && !buildingLayer.GetTile(right)){
+        Vector3Int right = CellPos + new Vector3Int(1, 0, 0);
+        Vector3Int left = CellPos + new Vector3Int(-1, 0, 0);
+        if (buildingLayer.HasTile(left) && !buildingLayer.HasTile(right)){
             return rightOfficeTile;
         }
-        else if (!buildingLayer.GetTile(left) && buildingLayer.GetTile(right)){
+        else if (!buildingLayer.HasTile(left) && buildingLayer.HasTile(right)){
             return leftOfficeTile;
         }
-        else if (buildingLayer.GetTile(left) && buildingLayer.GetTile(right)){
+        else if (buildingLayer.HasTile(left) && buildingLayer.HasTile(right)){
             return middleOfficeTile;
         }
         else{
             return bothOfficeTile;
         }
 
+    }
+
+    bool validPlace(Vector3Int CellPos){
+        //is position above building or above ground.
+        Vector3Int down = CellPos + new Vector3Int(0, -1, 0);
+        if (buildingLayer.HasTile(down) || CellPos.y == -7){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 

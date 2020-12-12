@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Show On Pause
+  - Disable On Pause
   layers:
   - Default
   - TransparentFX
