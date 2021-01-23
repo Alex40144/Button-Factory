@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class BuildingBuilder : MonoBehaviour
 {
+    public float buildingCost;
+
     public Tilemap buildingLayer;
     public Tilemap groundLayer;
     public Tilemap ghostLayer;
@@ -21,6 +23,10 @@ public class BuildingBuilder : MonoBehaviour
     public Tile rightOfficeTile;
     public Tile middleOfficeTile;
 
+
+    private GameObject economyObject;
+    private Economy economy;
+
     void Start()
     {
         buildingGrid = buildingLayer.layoutGrid;
@@ -28,6 +34,9 @@ public class BuildingBuilder : MonoBehaviour
         ghostGrid = ghostLayer.layoutGrid;
 
 		emptyOfficeBtn.onValueChanged.AddListener(delegate{Ghost(emptyOfficeBtn);});
+
+        economyObject = GameObject.FindWithTag("Economy");
+        economy = economyObject.GetComponent<Economy>();
     }
 
     void Update(){
@@ -35,7 +44,6 @@ public class BuildingBuilder : MonoBehaviour
         //TODO if esc key is pressed turn of toggle.
     }
 
-    //TODO change colour to show if position is acceptible 
     void Ghost(Toggle toggle){
         if(toggle.isOn){
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -45,7 +53,10 @@ public class BuildingBuilder : MonoBehaviour
             if (validPlace(cellpos)){
                 ghostLayer.color = Color.green;
                 if(Input.GetMouseButton(0)){
-                    Build(Camera.main.ScreenToWorldPoint(Input.mousePosition), toggle);
+                    if(economy.spend(buildingCost)){
+                        Build(Camera.main.ScreenToWorldPoint(Input.mousePosition), toggle);
+                    }
+                    //TODO flair that says "not enough money!"
                 }
             }
             else {
@@ -70,7 +81,6 @@ public class BuildingBuilder : MonoBehaviour
         }
         ghostLayer.ClearAllTiles();
     }
-    //TODO fix refresh
     void RefreshTile(Vector3Int CellPos){
         if (buildingLayer.HasTile(CellPos)){
             Tile tile = getType(CellPos);

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Show On Pause
   - Disable On Pause
+  - Bank Balance Viewer
+  - Economy
   layers:
   - Default
   - TransparentFX
