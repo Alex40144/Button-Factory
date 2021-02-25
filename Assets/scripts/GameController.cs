@@ -23,8 +23,8 @@ public class GameController : MonoBehaviour
         cam = Camera.main;
         targetZoom = cam.orthographicSize;
         //hide pause screen
-        pauseObjects = GameObject.FindGameObjectsWithTag("Show On Pause");
-        BuildingToggles = GameObject.FindGameObjectsWithTag("Disable On Pause");
+        pauseObjects = GameObject.FindGameObjectsWithTag("Show On Pause"); //menu screen
+        BuildingToggles = GameObject.FindGameObjectsWithTag("Disable On Pause"); //user interface
         Pause();
     }
 
@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour
     }
 
     void UI(){
-        if(Input.GetKeyDown(KeyCode.Escape)){
+        if(Input.GetKeyDown(KeyCode.Escape)){ //TODO and something ins't active
             gamePaused = !gamePaused;
             Pause();
         }
@@ -81,21 +81,20 @@ public class GameController : MonoBehaviour
     void Pause(){
         if (gamePaused){
             Time.timeScale = 0f;
-            foreach(GameObject g in pauseObjects){
-                g.SetActive(true);
+            foreach(GameObject item in pauseObjects){
+                item.SetActive(true);
             }
-            foreach(GameObject h in BuildingToggles){
-                h.GetComponent<Toggle>().isOn = false;
-                h.GetComponent<Toggle>().interactable = false;
+            foreach(GameObject item in BuildingToggles){
+                item.GetComponent<Toggle>().interactable = false;
             }
         }
         else{
             Time.timeScale = 1;
-            foreach(GameObject g in pauseObjects){
-                g.SetActive(false);
+            foreach(GameObject item in pauseObjects){
+                item.SetActive(false);
             }
-            foreach(GameObject h in BuildingToggles){
-                h.GetComponent<Toggle>().interactable = true;
+            foreach(GameObject item in BuildingToggles){
+                item.GetComponent<Toggle>().interactable = true;
             }
         }
     }

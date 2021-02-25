@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Economy : MonoBehaviour
 {
     public float starting_money;
-    public float bank;
+    float bank;
 
 
     private GameObject[] balanceViewer;

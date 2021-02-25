@@ -16,12 +16,12 @@ public class BuildingBuilder : MonoBehaviour
     private GridLayout groundGrid;
     private GridLayout ghostGrid;
 
-    public Toggle emptyOfficeBtn;
+    public Toggle BuildingBtn;
 
-    public Tile bothOfficeTile;
-    public Tile leftOfficeTile;
-    public Tile rightOfficeTile;
-    public Tile middleOfficeTile;
+    public Tile bothBuildingTile;
+    public Tile leftBuildingTile;
+    public Tile rightBuildingTile;
+    public Tile middleBuildingTile;
 
 
     private GameObject economyObject;
@@ -33,15 +33,17 @@ public class BuildingBuilder : MonoBehaviour
         groundGrid = groundLayer.layoutGrid;
         ghostGrid = ghostLayer.layoutGrid;
 
-		emptyOfficeBtn.onValueChanged.AddListener(delegate{Ghost(emptyOfficeBtn);});
+		BuildingBtn.onValueChanged.AddListener(delegate{Ghost(BuildingBtn);});
 
         economyObject = GameObject.FindWithTag("Economy");
         economy = economyObject.GetComponent<Economy>();
     }
 
     void Update(){
-        if (emptyOfficeBtn.isOn) Ghost(emptyOfficeBtn);
-        //TODO if esc key is pressed turn of toggle.
+        if (BuildingBtn.isOn) Ghost(BuildingBtn);
+        if (!this.BuildingBtn.interactable || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Mouse1)){
+            stop(BuildingBtn);
+        }
     }
 
     void Ghost(Toggle toggle){
@@ -49,7 +51,7 @@ public class BuildingBuilder : MonoBehaviour
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int cellpos = buildingGrid.WorldToCell(pos);
             ghostLayer.ClearAllTiles();
-            ghostLayer.SetTile(cellpos, bothOfficeTile);
+            ghostLayer.SetTile(cellpos, bothBuildingTile);
             if (validPlace(cellpos)){
                 ghostLayer.color = Color.green;
                 if(Input.GetMouseButton(0)){
@@ -93,16 +95,16 @@ public class BuildingBuilder : MonoBehaviour
         Vector3Int right = CellPos + new Vector3Int(1, 0, 0);
         Vector3Int left = CellPos + new Vector3Int(-1, 0, 0);
         if (buildingLayer.HasTile(left) && !buildingLayer.HasTile(right)){
-            return rightOfficeTile;
+            return rightBuildingTile;
         }
         else if (!buildingLayer.HasTile(left) && buildingLayer.HasTile(right)){
-            return leftOfficeTile;
+            return leftBuildingTile;
         }
         else if (buildingLayer.HasTile(left) && buildingLayer.HasTile(right)){
-            return middleOfficeTile;
+            return middleBuildingTile;
         }
         else{
-            return bothOfficeTile;
+            return bothBuildingTile;
         }
 
     }
@@ -116,6 +118,9 @@ public class BuildingBuilder : MonoBehaviour
         else {
             return false;
         }
+    }
+    void stop(Toggle toggle){
+        toggle.isOn = false;
     }
 }
 

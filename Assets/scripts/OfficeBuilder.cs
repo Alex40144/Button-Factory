@@ -12,13 +12,13 @@ public class OfficeBuilder : MonoBehaviour
     public Tilemap ghostLayer;
     public Tilemap officeLayer;
 
-    public Tile DeskTile;
+    public Tile OfficeTile;
 
     private GridLayout buildingGrid;
     private GridLayout groundGrid;
     private GridLayout ghostGrid;
     private GridLayout officeGrid;
-    public Toggle DeskBtn;
+    public Toggle OfficeBtn;
 
     private GameObject economyObject;
     private Economy economy;
@@ -33,20 +33,23 @@ public class OfficeBuilder : MonoBehaviour
         economyObject = GameObject.FindWithTag("Economy");
         economy = economyObject.GetComponent<Economy>();
 
-        DeskBtn.onValueChanged.AddListener(delegate{Ghost(DeskBtn);});
+        OfficeBtn.onValueChanged.AddListener(delegate{Ghost(OfficeBtn);});
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (DeskBtn.isOn) Ghost(DeskBtn);
+        if (OfficeBtn.isOn) Ghost(OfficeBtn);
+        if (!this.OfficeBtn.interactable || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Mouse1)){
+            stop(OfficeBtn);
+        }
     }
     void Ghost(Toggle toggle){
         if(toggle.isOn){
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int cellpos = buildingGrid.WorldToCell(pos);
             ghostLayer.ClearAllTiles();
-            ghostLayer.SetTile(cellpos, DeskTile);
+            ghostLayer.SetTile(cellpos, OfficeTile);
             if (validPlace(cellpos)){
                 ghostLayer.color = Color.green;
                 if(Input.GetMouseButton(0)){
@@ -66,7 +69,7 @@ public class OfficeBuilder : MonoBehaviour
     }
     void Build(Vector3 Pos, Toggle toggle){
         Vector3Int CellPos = officeGrid.WorldToCell(Pos);
-        Tile tile = DeskTile;
+        Tile tile = OfficeTile;
         officeLayer.SetTile(CellPos, tile);
         if(!Input.GetKey(KeyCode.LeftShift)){
             toggle.isOn = false;
@@ -81,5 +84,9 @@ public class OfficeBuilder : MonoBehaviour
         else {
             return false;
         }
+    }
+    void stop(Toggle toggle){
+        toggle.isOn = false;
+        ghostLayer.ClearAllTiles();
     }
 }
